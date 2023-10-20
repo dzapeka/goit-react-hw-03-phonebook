@@ -13,10 +13,26 @@ export default class App extends Component {
     };
   }
 
+  componentDidMount() {
+    const storedContacts = localStorage.getItem('contacts');
+    if (storedContacts) {
+      this.setState({ contacts: JSON.parse(storedContacts) });
+    }
+  }
+
+  saveContactsToLocalStorage = () => {
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  };
+
   deleteContactById = id => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id),
-    }));
+    this.setState(
+      prevState => ({
+        contacts: prevState.contacts.filter(contact => contact.id !== id),
+      }),
+      () => {
+        this.saveContactsToLocalStorage();
+      }
+    );
   };
 
   onContactFormSubmit = ({ name, number }) => {
@@ -29,9 +45,14 @@ export default class App extends Component {
       return;
     }
 
-    this.setState({
-      contacts: [...this.state.contacts, { name, number, id: nanoid() }],
-    });
+    this.setState(
+      {
+        contacts: [...this.state.contacts, { name, number, id: nanoid() }],
+      },
+      () => {
+        this.saveContactsToLocalStorage();
+      }
+    );
   };
 
   onFilterChange = value => {

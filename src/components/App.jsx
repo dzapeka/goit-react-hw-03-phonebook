@@ -20,19 +20,17 @@ export default class App extends Component {
     }
   }
 
-  saveContactsToLocalStorage = () => {
-    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-  };
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      console.log('update storage');
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   deleteContactById = id => {
-    this.setState(
-      prevState => ({
-        contacts: prevState.contacts.filter(contact => contact.id !== id),
-      }),
-      () => {
-        this.saveContactsToLocalStorage();
-      }
-    );
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
   };
 
   onContactFormSubmit = ({ name, number }) => {
@@ -45,14 +43,9 @@ export default class App extends Component {
       return;
     }
 
-    this.setState(
-      {
-        contacts: [...this.state.contacts, { name, number, id: nanoid() }],
-      },
-      () => {
-        this.saveContactsToLocalStorage();
-      }
-    );
+    this.setState({
+      contacts: [...this.state.contacts, { name, number, id: nanoid() }],
+    });
   };
 
   onFilterChange = value => {

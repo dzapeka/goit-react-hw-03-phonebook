@@ -20,5 +20,3 @@ export class ContactListItem extends Component {
     );
   }
 }
-
-export default ContactListItem;
